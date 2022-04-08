@@ -5,6 +5,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -29,23 +30,25 @@ googleProvider.setCustomParameters({
 });
 
 export const auth = getAuth();
-export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider); // 1. Sign In with Google Pop Up
-export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider); // 2. Sign In with Google Redirect
+export const signInWithGooglePopup = () =>
+  signInWithPopup(auth, googleProvider); // 1. Sign In with Google Pop Up
+export const signInWithGoogleRedirect = () =>
+  signInWithRedirect(auth, googleProvider); // 2. Sign In with Google Redirect
 
 // create db
 export const db = getFirestore();
 // this async function will save the user's credentials from GoogleAuth into the database
 // this function is invoked in the SignIn Component when the user clicks the SignIn button
 export const createUserDocumentFromAuth = async (userAuth) => {
-  if(!userAuth) return;
-  
+  if (!userAuth) return;
+
   const userDocRef = doc(db, 'users', userAuth.uid); // userAuth.uid comes from the GoogleAuth object that gets sent to the client upon successful login
 
   const userSnapShot = await getDoc(userDocRef);
 
-  if(!userSnapShot.exists()){
-    const { displayName, email } = userAuth
-    const createdAt = new Date()
+  if (!userSnapShot.exists()) {
+    const { displayName, email } = userAuth;
+    const createdAt = new Date();
     // console.log(userSnapShot)
 
     try {
@@ -53,18 +56,24 @@ export const createUserDocumentFromAuth = async (userAuth) => {
         displayName,
         email,
         createdAt,
-      })
-    } catch(error){
-      console.log('error creating user', error.message )
-      }
+      });
+    } catch (error) {
+      console.log('error creating user', error.message);
     }
-    return userDocRef
   }
+  return userDocRef;
+};
 
- // Email and Password Authentication
- export const createAuthUserWithEmailAndPassword = async(email, password) => {
-  if(!email || !password) return;
+// Email and Password Authentication
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
 
-  return await createUserWithEmailAndPassword(auth, email, password)
- }
+  return await createUserWithEmailAndPassword(auth, email, password);
+};
 
+// sign-in with email and password
+export const signInAuthWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+
+  return await signInWithEmailAndPassword(auth, email, password);
+};

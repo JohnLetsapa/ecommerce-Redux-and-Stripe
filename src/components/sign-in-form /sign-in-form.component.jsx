@@ -1,25 +1,21 @@
 import { useState } from 'react';
 import {
-  auth,
   signInWithGooglePopup,
-  createUserDocumentFromAuth,
-  createAuthUserWithEmailAndPassword,
+  signInAuthWithEmailAndPassword,
 } from '../../utils/firebase/firebase.utils';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
-import './sign-up-form.styles.scss';
+import './sign-in-form.styles.scss';
 
 // use this object to track all inputs for th four form fields instead of using useState four times -> Cleaner
 const defaultFormFields = {
-  displayName: '',
   email: '',
   password: '',
-  confirmPassword: '',
 };
 
-const SignUpForm = () => {
+const SignInForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
-  const { displayName, email, password, confirmPassword } = formFields;
+  const { email, password } = formFields;
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
@@ -33,42 +29,35 @@ const SignUpForm = () => {
     // therefore, this line updates all properties formFields properties
   };
 
-  const logGoogleUser = async () => {
+  const signInWithGoogle = async () => {
     const { user } = await signInWithGooglePopup(); // {user} comes from destructuring the response object to target only the info we require
-    createUserDocumentFromAuth(user);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (password !== confirmPassword) {
-      alert('Passwords do not match');
-      return;
-    }
 
     try {
-      let { user } = await createAuthUserWithEmailAndPassword(email, password);
-      user = { ...user, displayName: displayName };
-      createUserDocumentFromAuth(user);
+      const response = await signInAuthWithEmailAndPassword(email, password);
+      console.log(response);
       resetFormFields();
     } catch (error) {
-      if (error.code === 'auth/email-already-in-use') {
-        alert('Email address already in use');
+      switch (error.code) {
+        case 'auth/wrong-password':
+          alert('wrong password for email');
+          break;
+        case 'auth/user-not-found':
+          alert('no user associated with this email');
+          break;
+        default:
+          console.log(error);
       }
     }
   };
 
   return (
     <div className="sign-up-container">
-      <h2>Already have an account</h2>
-      <span>Sign in with your email and password</span>
-      <FormInput
-        label="Display Name"
-        type="text"
-        required
-        onChange={handleChange}
-        name="displayName"
-        value={displayName}
-      />
+      <h2>Dont have an account?</h2>
+      <span>Sign up with your email and password</span>
 
       <FormInput
         label="email"
@@ -87,21 +76,17 @@ const SignUpForm = () => {
         name="password"
         value={password}
       />
-
-      <FormInput
-        label="ConfirmPassword"
-        type="password"
-        required
-        onChange={handleChange}
-        name="confirmPassword"
-        value={password}
-      />
-
-      <Button type="submit" onClick={handleSubmit}>
-        Sign In
-      </Button>
+      <div className="buttons-container">
+        <Button type="submit" onClick={handleSubmit}>
+          Sign In
+        </Button>
+      
+        <Button type="button" buttonType="google" onClick={signInWithGoogle}>
+          Google Sign In
+        </Button>
+      </div>
     </div>
   );
 };
 
-export default SignUpForm;
+export default SignInForm;
