@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { UserContext } from '../../contexts/user.context';
 import {
   auth,
   signInWithGooglePopup,
@@ -20,6 +21,7 @@ const defaultFormFields = {
 const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { displayName, email, password, confirmPassword } = formFields;
+  const { setCurrentUser } = useContext(UserContext);
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
@@ -36,6 +38,7 @@ const SignUpForm = () => {
   const logGoogleUser = async () => {
     const { user } = await signInWithGooglePopup(); // {user} comes from destructuring the response object to target only the info we require
     createUserDocumentFromAuth(user);
+    // setCurrentUser(user);
   };
 
   const handleSubmit = async (event) => {
@@ -49,6 +52,7 @@ const SignUpForm = () => {
       let { user } = await createAuthUserWithEmailAndPassword(email, password);
       user = { ...user, displayName: displayName };
       createUserDocumentFromAuth(user);
+      // setCurrentUser(user);
       resetFormFields();
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
@@ -59,8 +63,9 @@ const SignUpForm = () => {
 
   return (
     <div className="sign-up-container">
-      <h2>Already have an account</h2>
-      <span>Sign in with your email and password</span>
+      <h2>Dont have an account?</h2>
+      <span>Sign up with your email and password</span>
+
       <FormInput
         label="Display Name"
         type="text"

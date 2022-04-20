@@ -9,8 +9,8 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigation />}>
-        <Route index element={<Home />} /> // index short for index = true. it
-        // will render at path = '/'.
+        <Route index element={<Home />} />{' '}
+        {/* index short for index = true. it will render at path = '/'. */}
         <Route path="/shop" element={<Shop />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/auth" element={<Authentication />} />
@@ -20,3 +20,5 @@ const App = () => {
 };
 
 export default App;
+
+
