@@ -12,7 +12,7 @@ export const UserContext = createContext({
 
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
-  console.log('UseContext currentUser :', currentUser);
+  // console.log('UseContext currentUser :', currentUser);
 
   // manages the User Auth Listener...runs on first mounts and then unmounts
   useEffect(() => {
@@ -29,7 +29,6 @@ export const UserProvider = ({ children }) => {
   const value = { currentUser, setCurrentUser };
   return (
     <UserContext.Provider value={value}>
-      {' '}
       {/* this accesses the values from the UserContext component   */}
       {children}
     </UserContext.Provider>
