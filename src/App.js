@@ -10,9 +10,10 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigation />}>
-        <Route index element={<Home />} />{' '}
         {/* index short for index = true. it will render at path = '/'. */}
-        <Route path="/shop" element={<Shop />} />
+        <Route index element={<Home />} />{' '}
+        {/* this '/shop/*' is shorthand for nested or dynamic route --> thus, this route expects additional routes.. */}
+        <Route path="/shop/*" element={<Shop />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/auth" element={<Authentication />} />
         <Route path="/checkout" element={<Checkout />} />

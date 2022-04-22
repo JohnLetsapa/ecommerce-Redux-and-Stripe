@@ -54,6 +54,7 @@ const SignUpForm = () => {
       createUserDocumentFromAuth(user);
       // setCurrentUser(user);
       resetFormFields();
+      alert(`You have successfully singed up with ${email}`);
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         alert('Email address already in use');
@@ -99,11 +100,11 @@ const SignUpForm = () => {
         required
         onChange={handleChange}
         name="confirmPassword"
-        value={password}
+        value={confirmPassword}
       />
 
       <Button type="submit" onClick={handleSubmit}>
-        Sign In
+        Sign Up
       </Button>
     </div>
   );

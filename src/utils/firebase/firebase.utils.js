@@ -9,7 +9,16 @@ import {
   signOut,
   onAuthStateChanged, // tracks state of signed-in or signed out throughout the application
 } from 'firebase/auth';
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection, // for uploading collections from the db
+  writeBatch, // for uploading collections from the db
+  query, // for accessing collections from the db
+  getDocs, // for accessing collections from the db
+} from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -39,6 +48,37 @@ export const signInWithGoogleRedirect = () =>
 
 // create db
 export const db = getFirestore();
+// creates collection and documents in the db. we use async because we are connecting to an external source.
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = collection(db, collectionKey); // this creates a collection in the specified db, db, with the key/name --> collectionKey, passed in as an argument
+  const batch = writeBatch(db); // instantiates a batch on the db passed...batch is a transaction that writes data to the db
+
+  objectsToAdd.forEach((object) => {
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    batch.set(docRef, object);
+  });
+
+  await batch.commit();
+  console.log('done');
+};
+// fetches data from the db
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, 'categories');
+  const q = query(collectionRef);
+
+  const querySnapshot = await getDocs(q);
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+
+  return categoryMap;
+};  
+
 // this async function will save the user's credentials from GoogleAuth into the database
 // this function is invoked in the SignIn Component when the user clicks the SignIn button
 export const createUserDocumentFromAuth = async (userAuth) => {
