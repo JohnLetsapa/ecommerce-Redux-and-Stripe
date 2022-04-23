@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import './directory-item.styles.scss';
 
 const DirectoryItem = ({ category }) => {
@@ -11,8 +12,12 @@ const DirectoryItem = ({ category }) => {
       }}
     >
       <div className="body">
-        <h2>{title}</h2>
-        <p>Shop Now</p>
+        <Link to={`shop/${title}`} className="category-heading">
+          {title}
+        </Link>
+        <Link to={`shop/${title}`}>
+          <p>Shop Now</p>
+        </Link>
       </div>
     </div>
   );
