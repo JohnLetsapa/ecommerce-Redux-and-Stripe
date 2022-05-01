@@ -64,7 +64,7 @@ export const addCollectionAndDocuments = async (
   await batch.commit();
   console.log('done');
 };
-// fetches data from the db
+// fetches data from the db --> Migrated to categories.selectors.js in keeping with best practices -> Selector must handle raw and basic data and convert it to required shape by the app
 export const getCategoriesAndDocuments = async () => {
   const collectionRef = collection(db, 'categories');
   const q = query(collectionRef);
@@ -77,7 +77,7 @@ export const getCategoriesAndDocuments = async () => {
   }, {});
 
   return categoryMap;
-};  
+};
 
 // this async function will save the user's credentials from GoogleAuth into the database
 // this function is invoked in the SignIn Component when the user clicks the SignIn button
